@@ -18,7 +18,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0 text-xl font-bold tracking-wide">
-            <Link href="/">SWARM.AI</Link>
+            <Link href="/">SWARM.AI<span className="text-accent1">_</span></Link>
           </div>
           <div className="hidden md:flex space-x-8">
             {links.map((link) => (
