@@ -1,8 +1,45 @@
+"use client";
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
+import { useState } from 'react';
+
 export default function HomePage() {
+  const [enteredKey, setEnteredKey] = useState('');
+  const [unlocked, setUnlocked] = useState(false);
+  const passkey = process.env.NEXT_PUBLIC_HOMEPAGE_PASSKEY || process.env.HOMEPAGE_PASSKEY;
+
+  if (!unlocked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="bg-card rounded-xl shadow-lg p-8 max-w-sm w-full text-center">
+          <h2 className="text-2xl font-bold mb-4">Protected Homepage</h2>
+          <p className="mb-6 text-textSecondary">Enter passkey to access the homepage.</p>
+          <input
+            type="password"
+            placeholder="Passkey"
+            className="w-full px-4 py-2 rounded-md bg-background border border-card/50 mb-4 focus:border-accent1 focus:ring-accent1 outline-none"
+            value={enteredKey}
+            onChange={e => setEnteredKey(e.target.value)}
+          />
+          <button
+            className="w-full px-4 py-2 bg-accent1 text-background font-semibold rounded-lg shadow hover:bg-accent1/80 transition-colors"
+            onClick={() => {
+              if (enteredKey === passkey) {
+                setUnlocked(true);
+              } else {
+                alert('Incorrect passkey');
+              }
+            }}
+          >
+            Unlock
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-24">
       {/* Hero Section */}
@@ -35,9 +72,30 @@ export default function HomePage() {
               </div>
               <div className="flex items-center space-x-6 mt-8 opacity-70">
                 {/* Micro proof: add logos later */}
-                <span>TUM</span>
-                <span>Diehl</span>
-                <span>RV Connex</span>
+                <a
+                  href="https://www.cs.cit.tum.de/camp/members/benjamin-busam/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline text-accent1 font-medium"
+                >
+                  TUM Computer Vision Lab
+                </a>
+                <a
+                  href="https://www.diehl.com/defence/en/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline text-accent1 font-medium"
+                >
+                  Diehl Defence
+                </a>
+                <a
+                  href="https://www.rvconnex.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline text-accent1 font-medium"
+                >
+                  RV Connex Aerospace
+                </a>
               </div>
             </div>
             <div className="hidden md:block">
@@ -45,7 +103,7 @@ export default function HomePage() {
               <div className="w-full aspect-square bg-card rounded-2xl flex items-center justify-center text-textSecondary relative overflow-hidden">
                 {/* Visual Placeholder */}
                 <video
-                  src="/videos/source.mp4"
+                  src="/videos/source-2.mp4"
                   className="w-full h-full object-cover rounded-2xl"
                   autoPlay
                   loop
