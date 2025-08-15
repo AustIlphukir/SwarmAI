@@ -14,8 +14,6 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
-    env:
-      NEXT_PUBLIC_HOMEPAGE_PASSKEY: ${{ secrets.HOMEPAGE_PASSKEY }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -24,6 +22,8 @@ jobs:
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
+        env:
+          NEXT_PUBLIC_HOMEPAGE_PASSKEY: ${{ secrets.HOMEPAGE_PASSKEY }}
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_HAPPY_POND_0CC717910 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
@@ -46,6 +46,7 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_HAPPY_POND_0CC717910 }}
           action: "close"
+
 
 
 
