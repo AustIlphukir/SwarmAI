@@ -94,6 +94,9 @@ export default function HomePage() {
     if (showModal) emailRef.current?.focus();
   }, [showModal]);
 
+  const passkey = process.env.NEXT_PUBLIC_HOMEPAGE_PASSKEY || process.env.HOMEPAGE_PASSKEY;
+
+
   if (!unlocked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -123,9 +126,7 @@ export default function HomePage() {
           {unlockError && <div className="mt-3 text-sm text-red-500">{unlockError}</div>}
         </div>
       </div>
-      
     );
-    
   }
 
   return (
@@ -233,6 +234,7 @@ export default function HomePage() {
                 {/* Partners / micro proof */}
                 <a
                   href="https://www.tum.de/"
+
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:underline text-accent1 font-medium"
@@ -245,7 +247,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   className="hover:underline text-accent1 font-medium"
                 >
-                  Diehl — user / Incubation partner
+                  Diehl Defence GmbH & Co. KG — user / Incubation partner
                 </a>
                 <a
                   href="https://www.rvconnex.com"
@@ -253,7 +255,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   className="hover:underline text-accent1 font-medium"
                 >
-                  RV Connex
+                  RV Connex Co., Ltd.
                 </a>
                 <a
                   href="https://3dwe.ai"
