@@ -6,6 +6,7 @@ import { Menu, X } from 'lucide-react';
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const links = [
+  { href: '/pitch', label: 'Pitch' },
     { href: '#technology', label: 'Technology' },
     { href: '#product', label: 'Product' },
     { href: '#consortium', label: 'Consortium' },
