@@ -1,6 +1,8 @@
 /**
  * @type {import('next').NextConfig}
  */
+const isProd = process.env.NODE_ENV === "production";
+
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
@@ -9,8 +11,9 @@ const nextConfig = {
     return [
       {
         source: "/architecture",
-        destination: "http://localhost:8080",
-        // destination: "https://d1rmg6jcg0tsw.cloudfront.net/viewer/3060a252-e667-48f3-ad33-d4d3fb06ce1a",
+        destination: isProd
+          ? "https://web.ambitiousgrass-e50277e8.westeurope.azurecontainerapps.io"
+          : "https://web.ambitiousgrass-e50277e8.westeurope.azurecontainerapps.io",
         permanent: false, // set to true if this will never change
       },
     ]
