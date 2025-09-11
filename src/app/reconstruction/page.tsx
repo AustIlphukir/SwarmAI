@@ -19,17 +19,24 @@ export default function ReconstructionPage() {
 
         <div className="grid md:grid-cols-2 gap-6 mt-6">
           <div className="bg-black rounded-lg overflow-hidden">
-            <video src="/videos/source-2.mp4" className="w-full h-full object-cover" autoPlay loop muted playsInline />
+            <img
+                  src="/images/SCR-20250911-tpju.jpeg"
+                  className="w-full h-[50%] object-cover rounded-2xl"
+                  alt="Reconstruction of 3D Digital Twin"
+              />
+            <Link href="https://d1rmg6jcg0tsw.cloudfront.net/viewer/3060a252-e667-48f3-ad33-d4d3fb06ce1a" target="_blank" className="block">
+              View 3D Model indoor
+            </Link>
           </div>
-          <div className="bg-card rounded-lg p-4 flex items-center justify-center">
-            <svg width="100%" height="220" viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" className="text-textSecondary">
-              <rect width="100%" height="100%" fill="#0f1724" />
-              <g fill="#94a3b8">
-                <rect x="60" y="40" width="140" height="140" rx="8" />
-                <rect x="260" y="30" width="260" height="160" rx="8" />
-              </g>
-              <text x="50%" y="92%" fill="#64748b" fontSize="13" fontFamily="Inter, ui-sans-serif, system-ui" textAnchor="middle">Preview: photogrammetry / LiDAR capture</text>
-            </svg>
+          <div className="bg-black rounded-lg overflow-hidden">
+           <img
+                  src="/images/image3.gif"
+                  className="w-full h-[50%] object-cover rounded-2xl"
+                  alt="Reconstruction of 3D Digital Twin"
+              /> 
+          <Link href="https://3dtwin.3dwe.org/burda_senatorre.html" target="_blank" className="block">
+            View 3D Model outdoor
+          </Link>
           </div>
         </div>
 

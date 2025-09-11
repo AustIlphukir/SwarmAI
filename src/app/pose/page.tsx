@@ -20,7 +20,7 @@ export default function PosePage() {
 
         <div className="grid md:grid-cols-2 gap-6 mt-6">
           <div className="bg-black rounded-lg overflow-hidden">
-            <video src="/videos/source.mp4" className="w-full h-full object-cover" autoPlay loop muted playsInline />
+            <video src="/videos/Pose.mp4" className="w-full h-full object-cover" autoPlay loop muted playsInline />
           </div>
           <div className="bg-card rounded-lg p-4">
             <h3 className="font-semibold mb-2 text-textPrimary">Demo preview</h3>

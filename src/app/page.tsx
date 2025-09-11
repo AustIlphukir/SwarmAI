@@ -338,7 +338,7 @@ export default function HomePage() {
               <img
                   src="/images/image4.gif"
                   className="w-full h-[50%] object-cover rounded-2xl"
-                  alt="Reconstruction of 3D Digital Twin"
+                  alt="Multimodal sensor registration"
               />
           </Link>
           <Link href="/reconstruction" className="block bg-card rounded-xl p-6 shadow-md space-y-2 hover:shadow-lg transition-shadow">
@@ -421,7 +421,7 @@ export default function HomePage() {
       <section id="architecture" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl sm:text-4xl font-bold mb-6">Architecture Overview<span className="text-accent1">_</span></h2>
         <div className="bg-card rounded-xl p-6 shadow-md text-textSecondary">
-          <p>Interactive diagram placeholder detailing Edge, Autonomy, C2 & Coordination modules and data link.</p>
+          <Link href="/architecture" className="text-accent1 hover:underline">See our solutions integrated in a C2 Command and Control environment.</Link>
         </div>
       </section>
 
