@@ -242,12 +242,12 @@ export default function HomePage() {
                   TUM Photogrammetry & Remote Sensing — TUM Aerospace
                 </a>
                 <a
-                  href="https://www.diehl.com/defence/en/"
+                  href="https://www.dide.com/defence/en/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:underline text-accent1 font-medium"
                 >
-                  Diehl Defence GmbH & Co. KG — user / Incubation partner
+                  DiDe Defence GmbH & Co. KG — user / Incubation partner
                 </a>
                 <a
                   href="https://www.rvconnex.com"
@@ -460,7 +460,7 @@ export default function HomePage() {
             <p className="text-textSecondary">Platform & integration</p>
           </div>
           <div className="bg-card rounded-xl p-6 shadow-md">
-            <h3 className="text-xl font-semibold mb-2">Diehl</h3>
+            <h3 className="text-xl font-semibold mb-2">DiDe</h3> 
             <p className="text-textSecondary">User / industry partner</p>
           </div>
           <div className="bg-card rounded-xl p-6 shadow-md">
@@ -480,7 +480,7 @@ export default function HomePage() {
           </div>
           <div className="bg-card rounded-xl p-4 text-textSecondary">
             <h4 className="font-semibold">Incubation</h4>
-            <p className="text-textSecondary text-sm">TUM Venture Labs / UnternehmerTUM network<br />Diehl Defence</p>
+            <p className="text-textSecondary text-sm">TUM Venture Labs / UnternehmerTUM network<br />DiDe</p>
           </div>
           <div className="bg-card rounded-xl p-4 text-textSecondary">
             <h4 className="font-semibold">Notes</h4>

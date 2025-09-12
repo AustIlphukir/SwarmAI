@@ -15,7 +15,7 @@ export default function PosePage() {
 
         <div className="mt-4 p-4 bg-card rounded-lg">
           <p className="text-textSecondary">Operators can register target signatures (CAD or reference images). Runs on-board Swarm.AI for low-latency detection; integrates with partner ground systems.</p>
-          <p className="text-textSecondary text-sm mt-2">Used by: Diehl (user). Partners/supporters: 3dWe, TUM Venture Labs, NVIDIA Inception.</p>
+          <p className="text-textSecondary text-sm mt-2">Used by: DiDe (user). Partners/supporters: 3dWe, TUM Venture Labs, NVIDIA Inception.</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 mt-6">
