@@ -80,19 +80,101 @@ export default function HomePage() {
       });
   }
 
-  useEffect(() => {
-    // show after 12s if not seen this session
-    if (localStorage.getItem('swarm_role_modal_seen')) return;
-    const t = setTimeout(() => {
-      setShowModal(true);
-      localStorage.setItem('swarm_role_modal_seen', '1');
-    }, 12000);
-    return () => clearTimeout(t);
-  }, []);
+// helpers
+const STORAGE_KEY = 'swarm_role_modal_meta';
+const SNOOZE_DAYS = 14;                      // "Not now" snoozes for 14 days
+const MAX_SHOWS = 3;                         // show CTA at most 3 times total per browser
 
-  useEffect(() => {
-    if (showModal) emailRef.current?.focus();
-  }, [showModal]);
+// ---- Local state to control CTA visibility ----
+const [canShowCta, setCanShowCta] = useState(false);
+
+// ---- Safe storage helpers ----
+function loadMeta(): any {
+  if (typeof window === 'undefined') return {};
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveMeta(meta: any) {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(meta));
+}
+
+// ---- Compute whether CTA may be shown ----
+useEffect(() => {
+  if (typeof window === 'undefined') return;
+  const meta = loadMeta();
+  const now = Date.now();
+  const snoozeMs = SNOOZE_DAYS * 24 * 60 * 60 * 1000;
+
+  const snoozed = !!meta.lastDismissTs && (now - meta.lastDismissTs) < snoozeMs;
+  const capped  = (meta.totalShows || 0) >= MAX_SHOWS;
+
+  setCanShowCta(!subscribed && !snoozed && !capped);
+}, [subscribed]);
+
+// ---- Open/Close handlers (CTA + modal overlay/close button) ----
+const openFromCta = () => {
+  setShowModal(true);
+  const meta = loadMeta();
+  saveMeta({ ...meta, totalShows: (meta.totalShows || 0) + 1, lastShowTs: Date.now() });
+};
+
+const onClose = () => {
+  setShowModal(false);
+  const meta = loadMeta();
+  saveMeta({ ...meta, lastDismissTs: Date.now() }); // start snooze
+  setCanShowCta(false); // hide CTA immediately
+};
+
+// (keep your focus-on-open effect)
+useEffect(() => {
+  if (showModal) emailRef.current?.focus();
+}, [showModal]);
+
+// show once per session, snooze 14 days after dismiss, and only after intent
+useEffect(() => {
+  if (typeof window === 'undefined') return;
+
+  const meta = loadMeta();
+  const now = Date.now();
+  const SNOOZE_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
+  const MAX_SHOWS = 3;
+
+  // session guard
+  if (sessionStorage.getItem('swarm_role_modal_seen_session')) return;
+
+  // long-term caps
+  if (meta.totalShows >= MAX_SHOWS) return;
+  if (meta.lastDismissTs && now - meta.lastDismissTs < SNOOZE_MS) return;
+
+  // intent triggers
+  let scrolled = false;
+  let timerDone = false;
+  let pv = Number(sessionStorage.getItem('pv') || '0') + 1;
+  sessionStorage.setItem('pv', String(pv));
+
+  const maybeShow = () => {
+    if (scrolled && (timerDone || pv >= 2)) {
+      setShowModal(true);
+      sessionStorage.setItem('swarm_role_modal_seen_session', '1');
+      saveMeta({ ...meta, totalShows: (meta.totalShows || 0) + 1, lastShowTs: now });
+      window.removeEventListener('scroll', onScroll);
+    }
+  };
+
+  const onScroll = () => {
+    const depth = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
+    if (depth >= 0.6) { scrolled = true; maybeShow(); }
+  };
+
+  // 25s active time OR 2nd page view + 60% scroll
+  const t = setTimeout(() => { timerDone = true; maybeShow(); }, 25000);
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  return () => { clearTimeout(t); window.removeEventListener('scroll', onScroll); };
+}, []);
+
+
 
   const passkey = process.env.NEXT_PUBLIC_HOMEPAGE_PASSKEY || process.env.HOMEPAGE_PASSKEY;
 
@@ -176,8 +258,8 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Role & newsletter modal trigger (auto-opened) */}
-              {showModal && (
+              {/*  Role & newsletter modal trigger (auto-opened)  */}
+              {/* {showModal && (
                 <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4">
                   <div className="absolute inset-0 bg-black/40" onClick={() => setShowModal(false)} />
                   <div className="relative bg-white dark:bg-card text-textPrimary rounded-lg max-w-lg w-full p-6 shadow-lg z-10">
@@ -229,7 +311,136 @@ export default function HomePage() {
                     </form>
                   </div>
                 </div>
+              )} */}
+              <>
+              {/* Modal (only if user clicks CTA) */}
+              {showModal && (
+                <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                  <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+                  <div className="relative bg-white dark:bg-card text-textPrimary rounded-lg max-w-lg w-full p-6 shadow-lg z-10">
+                    <h3 className="text-lg font-semibold mb-2">Quick question</h3>
+                    <p className="text-sm text-textSecondary mb-4">
+                      Are you an investor, project partner, or a potential customer? Optionally subscribe to product updates (GDPR-compliant).
+                    </p>
+
+                    <div className="flex gap-2 mb-4">
+                      <button
+                        onClick={() => setRole('investor')}
+                        className={`px-3 py-1 rounded ${
+                          role === 'investor'
+                            ? 'bg-accent1 text-white'
+                            : 'bg-[#0f1724] text-textSecondary'
+                        }`}
+                      >
+                        Investor
+                      </button>
+                      <button
+                        onClick={() => setRole('partner')}
+                        className={`px-3 py-1 rounded ${
+                          role === 'partner'
+                            ? 'bg-accent1 text-white'
+                            : 'bg-[#0f1724] text-textSecondary'
+                        }`}
+                      >
+                        Project partner
+                      </button>
+                      <button
+                        onClick={() => setRole('customer')}
+                        className={`px-3 py-1 rounded ${
+                          role === 'customer'
+                            ? 'bg-accent1 text-white'
+                            : 'bg-[#0f1724] text-textSecondary'
+                        }`}
+                      >
+                        Customer
+                      </button>
+                    </div>
+
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        const simpleEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (email && !simpleEmail.test(email)) {
+                          alert('Please enter a valid email or leave blank to skip.');
+                          return;
+                        }
+                        if (email && !consent) {
+                          alert('Please consent to receive updates via email.');
+                          return;
+                        }
+                        try {
+                          const res = await fetch('/api/subscribe', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ role, email: email || null, consent }),
+                          });
+                          const payload = await res.json();
+                          if (!res.ok) throw new Error(payload?.error || 'failed');
+                          setSubscribed(true);
+                          setTimeout(() => setShowModal(false), 1000);
+                        } catch (err) {
+                          console.error(err);
+                          alert('Subscription failed — try again later.');
+                        }
+                      }}
+                      className="flex flex-col gap-3"
+                    >
+                      <input
+                        ref={emailRef}
+                        type="email"
+                        placeholder="Email (optional)"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full rounded px-3 py-2 bg-[#0b1220] text-textSecondary"
+                      />
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={consent}
+                          onChange={(e) => setConsent(e.target.checked)}
+                        />{' '}
+                        I agree to receive product updates (you can unsubscribe anytime)
+                      </label>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-textSecondary">
+                          {subscribed ? 'Thanks — you will be updated.' : 'We’ll only email product updates.'}
+                        </div>
+                        <div className="flex gap-2">
+                          <button type="button" onClick={onClose} className="text-sm text-textSecondary hover:underline">
+                            Close
+                          </button>
+                          <button type="submit" className="px-3 py-1 rounded bg-accent1 text-white text-sm">
+                            {subscribed ? 'Done' : 'Subscribe'}
+                          </button>
+                        </div>
+                      </div>
+                      <p className="text-xs text-textSecondary mt-2">
+                        Privacy: we store only role, email (if provided), consent and a consent timestamp.
+                        See our <a href="/privacy" className="text-accent1 underline">privacy policy</a>.
+                      </p>
+                    </form>
+                  </div>
+                </div>
               )}
+
+              {/* Floating CTA */}
+                {!showModal && canShowCta && (
+                  <div className="fixed bottom-4 right-4 z-40 rounded-lg shadow-lg bg-[#0f1724] text-textSecondary px-4 py-3 flex items-center gap-3">
+                    <span className="text-sm">Get product updates?</span>
+                    <button
+                      className="px-3 py-1 rounded bg-accent1 text-white text-sm"
+                      onClick={openFromCta}
+                    >
+                      Yes, notify me
+                    </button>
+                    <button className="text-xs opacity-70 hover:opacity-100" onClick={onClose}>
+                      Not now
+                    </button>
+                  </div>
+                )}
+              </>
+
               <div className="flex items-center space-x-6 mt-8 opacity-80">
                 {/* Partners / micro proof */}
                 <a
@@ -522,15 +733,15 @@ export default function HomePage() {
         <div className="grid md:grid-cols-3 gap-8">
           <div className="bg-card rounded-xl p-6 shadow-md text-center">
             <h3 className="text-xl font-semibold mb-2">Dr. Lukas Karge</h3>
-            <p className="text-textSecondary">Lead — distributed systems & AI deployment.</p>
+            <p className="text-textSecondary">CEO — distributed systems & AI deployment.</p>
           </div>
           <div className="bg-card rounded-xl p-6 shadow-md text-center">
             <h3 className="text-xl font-semibold mb-2">Prof. Benjamin Busam</h3>
-            <p className="text-textSecondary">Advisor — 3D vision & founder (3dWe).</p>
+            <p className="text-textSecondary">CTO — 3D vision & founder (3dWe).</p>
           </div>
           <div className="bg-card rounded-xl p-6 shadow-md text-center">
             <h3 className="text-xl font-semibold mb-2">Core engineers</h3>
-            <p className="text-textSecondary">AI, 3D perception and remote sensing experts.</p>
+            <p className="text-textSecondary">AI, 3D perception and remote sensing researchers.</p>
           </div>
         </div>
         <div className="mt-6 text-center">
