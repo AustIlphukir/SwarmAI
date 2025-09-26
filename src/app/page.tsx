@@ -237,13 +237,10 @@ useEffect(() => {
             <div className="space-y-6">
               {/* Intro statements */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
-                Swarm.AI<br /> AI reconnaissance backbone for modern defense &amp; emergency operations<span className="text-accent1">_</span>
+                Swarm.AI<br /> Reconnaissance backbone for modern defense &amp; emergency operations<span className="text-accent1">_</span>
               </h1>
               <p className="text-lg md:text-xl text-textSecondary">
-                Fast. Accurate. Modular. From sensor to system.
-              </p>
-              <p className="text-base md:text-lg text-textSecondary">
-                Bringing 3D perception research to affordable, export‑aware edge platforms.
+                Fast. Accurate. Modular. From sensor to system to platform.
               </p>
               <div className="flex flex-wrap space-x-4 mt-6">
                 {/* Prominent contact button */}
@@ -485,28 +482,41 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* Problem Section */}
+
+{/* Problem Section */}
       <section id="problem" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-6">The aerial threat has changed<span className="text-accent1">_</span></h2>
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-4 text-textSecondary">            
+        <h2 className="text-3xl sm:text-4xl font-bold mb-6">The aerial threat has changed<span className="text-accent1">_</span></h2> 
               <p className="text-xl md:text-2xl font-semibold text-textPrimary">
                 We believe defense against small UAVs is the major technology challenge in the 2020s/30s<span className="text-accent1">_</span><br />
                 <br />
                 We bring the latest scientific progress in computer vision and tracking to the defense industry.<span className="text-accent1">_</span>
               </p>
+              <br />
+        <div className="grid md:grid-cols-5 gap-8">
+          <div className="md:col-span-3 space-y-4 text-textSecondary">           
 
+          
           <div className="bg-card rounded-xl p-6 shadow-md flex flex-col justify-between">
-              <h3 className="text-xl font-semibold mb-2">Pursuit</h3>
+              {/* <h3 className="text-xl font-semibold mb-2">Pursuit</h3>
               <p className="text-textSecondary">Follow and Pursuit with up to 200 km/h</p>
             </div>
             <div className="bg-card rounded-xl p-6 shadow-md flex flex-col justify-between">
               <h3 className="text-xl font-semibold mb-2">Range & Convergence</h3>
-              <p className="text-textSecondary">Up to 5 km detection range and 24 h air time.</p>
+              <p className="text-textSecondary">Up to 5 km detection range and 24 h air time.</p> */}
+              <h3 className="text-xl font-semibold mb-2">Early Warning</h3>
+              <p className="text-textSecondary">Edge-AI systems, continuous camera + IR + Accustic sensors.</p>
+            </div>
+            <div className="bg-card rounded-xl p-6 shadow-md flex flex-col justify-between">
+              <h3 className="text-xl font-semibold mb-2">Multi-Target Pose Detection</h3>
+              <p className="text-textSecondary">Flight directions, speeds, headings; cohesion score; classification. Up to 20 km radius per sensor device. </p>
+            </div>
+            <div className="bg-card rounded-xl p-6 shadow-md flex flex-col justify-between">
+              <h3 className="text-xl font-semibold mb-2">Tactical Assistance</h3>
+              <p className="text-textSecondary">Ground station alert; options: intercept or handover to ground-based defense. </p>
             </div>
           </div>
           
-          <div className="space-y-4">
+          <div className="md:col-span-2  space-y-4">
             {/* Data cards placeholder */}
 
               <div className="w-full aspect-square bg-card rounded-2xl flex items-center justify-center text-textSecondary relative overflow-hidden opacity-30">
@@ -527,6 +537,35 @@ useEffect(() => {
           <Link href="#scenario" className="text-accent1 hover:underline">See a swarm scenario &rarr;</Link>
         </div>
       </section>
+
+
+      {/* Scenario Section */}
+      {/* <section id="scenario" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-6">Threat Scenario<span className="text-accent1">_</span></h2>
+        <p className="text-xl md:text-2xl font-semibold text-textPrimary">
+                Coordinated swarm approaching an urban perimeter<span className="text-accent1">_</span><br />
+          <br /></p>
+        <ol className="space-y-6 list-decimal list-inside text-textSecondary">
+          <li>
+            <span className="font-semibold text-textPrimary">Early Warning –</span> Edge-AI patrol, 10–20 km radius, continuous IR + LiDAR.
+          </li>
+          <li>
+            <span className="font-semibold text-textPrimary">Multi-Target Pose Detection –</span> Flight directions, speeds, headings; cohesion score; classification.
+          </li>
+          <li>
+            <span className="font-semibold text-textPrimary">Tactical Decision –</span> Ground station alert; options: intercept or handover to ground-based defense.
+          </li>
+          <li>
+            <span className="font-semibold text-textPrimary">Interceptor Action –</span> Pursuit mode, accurate pose-driven engagement.
+          </li>
+          <li>
+            <span className="font-semibold text-textPrimary">Outcome –</span> Primary wave neutralized/disoriented; secondary wave handled; full audit trail.
+          </li>
+        </ol>
+        <div className="mt-6">
+          <Link href="#contact" className="text-accent1 hover:underline">Request a live demo &rarr;</Link>
+        </div>
+      </section> */}
 
       {/* Approach Section */}
       <section id="technology" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -576,35 +615,15 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* Scenario Section */}
-      <section id="scenario" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-6">Coordinated swarm approaching an urban perimeter<span className="text-accent1">_</span></h2>
-        <ol className="space-y-6 list-decimal list-inside text-textSecondary">
-          <li>
-            <span className="font-semibold text-textPrimary">Early Warning –</span> Edge-AI patrol, 10–20 km radius, continuous IR + LiDAR.
-          </li>
-          <li>
-            <span className="font-semibold text-textPrimary">Multi-Target Pose Detection –</span> Flight directions, speeds, headings; cohesion score; classification.
-          </li>
-          <li>
-            <span className="font-semibold text-textPrimary">Tactical Decision –</span> Ground station alert; options: intercept or handover to ground-based defense.
-          </li>
-          <li>
-            <span className="font-semibold text-textPrimary">Interceptor Action –</span> Pursuit mode, accurate pose-driven engagement.
-          </li>
-          <li>
-            <span className="font-semibold text-textPrimary">Outcome –</span> Primary wave neutralized/disoriented; secondary wave handled; full audit trail.
-          </li>
-        </ol>
-        <div className="mt-6">
-          <Link href="#contact" className="text-accent1 hover:underline">Request a live demo &rarr;</Link>
-        </div>
-      </section>
 
       {/* Product Section */}
       <section id="product" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-6">SwarmEye Edge‑AI Drone<span className="text-accent1">_</span></h2>
+        <h2 className="text-3xl sm:text-4xl font-bold mb-6">SwarmEye Edge‑AI Drone development<span className="text-accent1">_</span></h2>
         <div className="grid md:grid-cols-2 gap-8">
+
+        <p className="text-xl md:text-2xl font-semibold text-textPrimary">
+                Our consortium develops a surveillance system consisting of drones, static cameras, accustic sensors and fuses all data ready to be consumed by your platform.<span className="text-accent1">_</span><br />
+          <br /></p>
           <div className="space-y-4 text-textSecondary">
             <p>Edge compute for autonomous perception and decision making.</p>
             <p>Modular payload with thermal, LiDAR and polarization sensors.</p>
@@ -655,6 +674,20 @@ useEffect(() => {
           </Link>
         </div>
       </section>
+
+      {/* About us Section */}
+      <section id="aboutus" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-6">About Us <span className="text-accent1">_</span></h2>
+        {/* <p>Bringing 3D perception research to affordable, export‑aware edge platforms.</p>
+        <br /> */}
+        <div className="bg-card rounded-xl p-6 shadow-md text-textSecondary">
+          {/* <Link href="/aboutus" className="text-accent1 hover:underline">See our solutions integrated in a C2 Command and Control environment.</Link> */}
+          <p>Founded in 2025 as a spin-off from the Technical University of Munich (TUM), Swarm.AI is driven by a mission to revolutionize aerial threat detection and defense. Our team combines deep expertise in computer vision, robotics, and aerospace engineering to deliver cutting-edge solutions that address the evolving challenges of modern defense. With a strong foundation in research and a commitment to innovation, we are dedicated to providing reliable, efficient, and scalable technologies that enhance situational awareness and operational effectiveness for our clients worldwide.</p>
+        </div>
+      </section>
+
+
+
 
   {/* Detailed capability pages moved to dedicated routes: /reconstruction and /pose */}
 
