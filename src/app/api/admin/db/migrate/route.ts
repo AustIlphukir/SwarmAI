@@ -8,7 +8,10 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN || '';
 const DB_URL = process.env.SUPABASE_DB_URL || '';
 
 function json(body: any, init?: number | ResponseInit) {
-  const res = NextResponse.json(body, init);
+  const res = NextResponse.json(
+    body,
+    typeof init === 'number' ? { status: init } : init
+  );
   res.headers.set('Cache-Control', 'no-store');
   return res;
 }

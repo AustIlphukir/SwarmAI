@@ -51,8 +51,10 @@ function isRoleValid(role: unknown): role is string {
 }
 
 function json(body: any, init?: number | ResponseInit) {
-  const res = NextResponse.json(body, init);
-  // helpful caching defaults for API routes
+  const res = NextResponse.json(
+    body,
+    typeof init === 'number' ? { status: init } : init
+  );
   res.headers.set('Cache-Control', 'no-store');
   return res;
 }
