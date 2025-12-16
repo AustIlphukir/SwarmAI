@@ -44,6 +44,21 @@ export default function HomePage() {
 
   // ---- Local state to control CTA visibility ----
   const [canShowCta, setCanShowCta] = useState(false);
+  // Initialize CTA visibility from persisted meta
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const meta = loadMeta() || {};
+      const totalShows = meta.totalShows || 0;
+      const lastDismiss = meta.lastDismissTs ? new Date(meta.lastDismissTs).getTime() : 0;
+      const now = Date.now();
+      const snoozeMs = SNOOZE_DAYS * 24 * 60 * 60 * 1000;
+      const canShow = totalShows < MAX_SHOWS && (lastDismiss === 0 || now - lastDismiss > snoozeMs);
+      setCanShowCta(canShow);
+    } catch (e) {
+      setCanShowCta(false);
+    }
+  }, []);
   const onClose = () => {
     setShowModal(false);
     const meta = loadMeta();
