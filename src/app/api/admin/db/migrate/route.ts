@@ -8,7 +8,9 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN || '';
 const DB_URL = process.env.SUPABASE_DB_URL || '';
 
 function json(body: any, init?: number | ResponseInit) {
-  const res = NextResponse.json(body, init);
+  const initObj: ResponseInit =
+    typeof init === 'number' ? { status: init } : (init ?? {});
+  const res = NextResponse.json(body, initObj);
   res.headers.set('Cache-Control', 'no-store');
   return res;
 }
