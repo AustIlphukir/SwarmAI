@@ -51,13 +51,18 @@ describe('subscribe route', () => {
     // Mock createClient -> returns client with from().upsert()
     const upsertMock = jest.fn().mockResolvedValue({ error: null });
     const fromMock = jest.fn().mockReturnValue({ upsert: upsertMock });
-    (supabaseModule.createClient as jest.Mock).mockReturnValue({ from: fromMock });
-
+    // Use unstable_mockModule to ensure the module sees this mock when it's imported
+    jest.resetModules();
     process.env.SUPABASE_URL = 'https://example.supabase.co';
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'service-key';
+    // Use doMock so the module is mocked for the upcoming dynamic import
+    jest.doMock('@supabase/supabase-js', () => ({
+      createClient: jest.fn().mockReturnValue({ from: fromMock }),
+    }));
+    const { POST: freshHandler } = await import('./route');
 
     const req = makeRequest({ role: 'founder', email: 't@example.com', consent: true });
-    const res = await subscribeHandler(req as any);
+    const res = await freshHandler(req as any);
     const body = await res.json();
     expect(res.status).toBe(201);
     expect(body.ok).toBe(true);
