@@ -1,6 +1,8 @@
 "use client";
 import Image from 'next/image';
 import Link from 'next/link';
+import Section from '../components/Section';
+import FeatureCard from '../components/FeatureCard';
 import { useState, useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 /**
@@ -330,6 +332,20 @@ export default function HomePage() {
             Contact Us
             <ArrowRight className="w-5 h-5" />
           </Link>
+          {process.env.NODE_ENV !== 'production' && (
+            <button
+              onClick={async () => {
+                try {
+                  await fetch('/api/lock', { method: 'POST' });
+                } catch (_) {}
+                try { localStorage.removeItem('swarm_home_unlocked'); } catch (_) {}
+                try { location.reload(); } catch (_) { /* ignore */ }
+              }}
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2 border rounded-md text-sm text-textSecondary bg-card"
+            >
+              Dev: Lock
+            </button>
+          )}
         </div>
       </section>
       <section className="py-0 relative overflow-hidden flex items-center justify-center">
@@ -382,6 +398,22 @@ export default function HomePage() {
         </div>
 
       </section>  
+
+      {/* 1. Product Overview */}
+      <Section
+        title="A decentralized perception platform for real-time airspace intelligence"
+        subtitle="Swarm.ai is an AI-native perception system that detects, tracks, and understands aerial objects in real time using distributed edge intelligence. It fuses multi-modal sensor data across a resilient mesh — without relying on centralized infrastructure."
+      >
+        <div className="grid md:grid-cols-4 gap-4 mt-6">
+          <FeatureCard icon={<>🧠</>} title="Real-time, on-edge" desc="Intelligence computed locally at the sensor." />
+          <FeatureCard icon={<>🔎</>} title="Multi-modal fusion" desc="Vision, thermal, acoustic, RF-ready." />
+          <FeatureCard icon={<>🧬</>} title="Decentralized & resilient" desc="Mesh-first, no single point of failure." />
+          <FeatureCard icon={<>👩‍🔧</>} title="Built for safety" desc="Designed for regulated environments." />
+        </div>
+      </Section>
+
+      {/* Footer */}
+      
       <section className="w-full py-16 bg-background border-t border-card/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
           <h2 className="text-xs tracking-widest uppercase text-textSecondary">Trusted by partners</h2>

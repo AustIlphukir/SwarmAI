@@ -10,7 +10,13 @@ export function middleware(req: NextRequest) {
     pathname.startsWith('/_next') ||
     pathname.startsWith('/static') ||
     pathname.startsWith('/api/') ||
-    pathname === '/favicon.ico'
+    pathname === '/favicon.ico' ||
+    // public asset folders we want to serve without gating
+    pathname.startsWith('/images') ||
+    pathname.startsWith('/videos') ||
+    pathname.startsWith('/icons') ||
+    // common static files by extension (png/jpg/svg/mp4/ico/etc.)
+    /\.(png|jpe?g|svg|webp|ico|mp4|webm|json|css|js)$/.test(pathname)
   ) {
     return NextResponse.next();
   }
@@ -33,5 +39,7 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  // Exclude common static asset paths from the middleware matcher so
+  // requests for images, videos and static files are not redirected.
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|images|videos|icons).*)'],
 };
