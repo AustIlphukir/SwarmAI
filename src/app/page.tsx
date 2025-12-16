@@ -76,6 +76,7 @@ export default function HomePage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ key: enteredKey }),
+      credentials: 'same-origin',
     })
       .then(res => res.json())
       .then(payload => {
@@ -83,9 +84,12 @@ export default function HomePage() {
           setUnlockError(payload?.error || 'Incorrect passkey');
           return;
         }
-        setUnlocked(true);
+        // Server set an HttpOnly cookie; reload so middleware will allow access.
         if (typeof window !== 'undefined') {
-          localStorage.setItem('swarm_home_unlocked', '1');
+          localStorage.setItem('swarm_home_unlocked', '1'); // backward compatibility
+          window.location.reload();
+        } else {
+          setUnlocked(true);
         }
       })
       .catch(() => setUnlockError('Network error — try again'));
