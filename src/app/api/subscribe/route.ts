@@ -51,7 +51,8 @@ function isRoleValid(role: unknown): role is string {
 }
 
 function json(body: any, init?: number | ResponseInit) {
-  const res = NextResponse.json(body, init);
+  const initObj: ResponseInit = typeof init === 'number' ? { status: init } : (init ?? {});
+  const res = NextResponse.json(body, initObj);
   // helpful caching defaults for API routes
   res.headers.set('Cache-Control', 'no-store');
   return res;

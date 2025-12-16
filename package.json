@@ -9,34 +9,33 @@
     "lint": "echo \"No lint configured.\"",
     "db:reset": "ADMIN_TOKEN=$ADMIN_TOKEN BASE_URL=http://localhost:3000 ./scripts/db-reset.sh",
     "db:migrate": "ADMIN_TOKEN=$ADMIN_TOKEN BASE_URL=http://localhost:3000 ./scripts/db-migrate.sh",
-    "db:test": "ADMIN_TOKEN=$ADMIN_TOKEN BASE_URL=http://localhost:3000 ./scripts/db-add-data.sh"
-    ,
+    "db:test": "ADMIN_TOKEN=$ADMIN_TOKEN BASE_URL=http://localhost:3000 ./scripts/db-add-data.sh",
     "test": "jest"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
     "framer-motion": "^10.12.16",
     "lucide-react": "^0.330.0",
-    "next": "14.0.0",
+    "next": "^14.2.35",
     "pg": "^8.16.3",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@types/node": "24.2.1",
-    "@types/react": "19.1.10",
-    "@types/react-dom": "^19.1.7",
-    "autoprefixer": "10.4.15",
-    "postcss": "8.4.30",
-    "tailwindcss": "3.4.1",
-    "typescript": "5.4.5",
-    "jest": "^30.0.0",
-    "@types/jest": "^30.0.0",
-    "@testing-library/react": "^15.0.0",
     "@testing-library/dom": "^9.3.1",
     "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^15.0.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "24.2.1",
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
+    "autoprefixer": "10.4.15",
+    "jest": "^30.0.0",
     "jest-environment-jsdom": "^30.0.0",
     "jest-environment-node": "^30.0.0",
-    "ts-node": "^10.9.1"
+    "postcss": "^8.5.6",
+    "tailwindcss": "3.4.1",
+    "ts-node": "^10.9.1",
+    "typescript": "5.4.5"
   }
 }
