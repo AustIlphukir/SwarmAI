@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "e2e:functions": "node scripts/e2e-functions.js",
     "build": "next build",
+    "export": "next export",
+    "build:export": "next build && next export",
     "start": "next start",
     "lint": "echo \"No lint configured.\"",
     "db:reset": "ADMIN_TOKEN=$ADMIN_TOKEN BASE_URL=http://localhost:3000 ./scripts/db-reset.sh",
@@ -14,7 +17,6 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
-    "framer-motion": "^10.12.16",
     "lucide-react": "^0.330.0",
     "next": "^14.2.35",
     "pg": "^8.16.3",
