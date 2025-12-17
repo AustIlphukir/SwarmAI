@@ -13,6 +13,7 @@ import FeatureCard from '../../components/FeatureCard';
 export default function ProductPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-16">
+      <h1 className="sr-only">A decentralized perception platform for real-time airspace intelligence</h1>
 
       {/* 3. How Swarm.ai Works */}
       <Section title="The Three Layers of Swarm.ai" subtitle="Conceptual overview of sensing, edge perception, and distributed intelligence.">
