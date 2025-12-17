@@ -192,16 +192,7 @@
 <a name='L127'></a><a href='#L127'>127</a>
 <a name='L128'></a><a href='#L128'>128</a>
 <a name='L129'></a><a href='#L129'>129</a>
-<a name='L130'></a><a href='#L130'>130</a>
-<a name='L131'></a><a href='#L131'>131</a>
-<a name='L132'></a><a href='#L132'>132</a>
-<a name='L133'></a><a href='#L133'>133</a>
-<a name='L134'></a><a href='#L134'>134</a>
-<a name='L135'></a><a href='#L135'>135</a>
-<a name='L136'></a><a href='#L136'>136</a>
-<a name='L137'></a><a href='#L137'>137</a>
-<a name='L138'></a><a href='#L138'>138</a>
-<a name='L139'></a><a href='#L139'>139</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L130'></a><a href='#L130'>130</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -214,15 +205,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -354,68 +336,44 @@ import FeatureCard from '../../components/FeatureCard';
 export default function ProductPage() {
   return (
     &lt;div className="max-w-5xl mx-auto px-4 py-16"&gt;
-&nbsp;
-&nbsp;
-      {/* 2. The Problem We Solve */}
-      &lt;Section title="Why classical systems fail in low-altitude airspace" subtitle="Defending airspace today is a data and perception problem — not a weapons problem."&gt;
-        &lt;div className="grid md:grid-cols-2 gap-4 text-left"&gt;
-          &lt;FeatureCard icon={&lt;&gt;🛩️&lt;/&gt;} title="Below radar" desc="Small autonomous drones operate under traditional thresholds." /&gt;
-          &lt;FeatureCard icon={&lt;&gt;🛡️&lt;/&gt;} title="Centralized fragility" desc="Slow, expensive, brittle architectures can't keep up." /&gt;
-          &lt;FeatureCard icon={&lt;&gt;🎬&lt;/&gt;} title="Adaptive threats" desc="Static detectors lose against fast-evolving tactics." /&gt;
-          &lt;FeatureCard icon={&lt;&gt;👀&lt;/&gt;} title="Perception bottleneck" desc="Seeing, understanding, and tracking is the constraint." /&gt;
-        &lt;/div&gt;
-      &lt;/Section&gt;
-      
-      {/* 1. Product Overview */}
-      &lt;Section
-        title="A decentralized perception platform for real-time airspace intelligence"
-        subtitle="Swarm.ai is an AI-native perception system that detects, tracks, and understands aerial objects in real time using distributed edge intelligence. It fuses multi-modal sensor data across a resilient mesh — without relying on centralized infrastructure."
-      &gt;
-        &lt;div className="grid md:grid-cols-4 gap-4 mt-6"&gt;
-          &lt;FeatureCard icon={&lt;&gt;🧠&lt;/&gt;} title="Real-time, on-edge" desc="Intelligence computed locally at the sensor." /&gt;
-          &lt;FeatureCard icon={&lt;&gt;🔎&lt;/&gt;} title="Multi-modal fusion" desc="Vision, thermal, acoustic, RF-ready." /&gt;
-          &lt;FeatureCard icon={&lt;&gt;🧬&lt;/&gt;} title="Decentralized &amp; resilient" desc="Mesh-first, no single point of failure." /&gt;
-          &lt;FeatureCard icon={&lt;&gt;👩‍🔧&lt;/&gt;} title="Built for safety" desc="Designed for regulated environments." /&gt;
-        &lt;/div&gt;
-      &lt;/Section&gt;
-&nbsp;
+      &lt;h1 className="sr-only"&gt;A decentralized perception platform for real-time airspace intelligence&lt;/h1&gt;
 &nbsp;
       {/* 3. How Swarm.ai Works */}
       &lt;Section title="The Three Layers of Swarm.ai" subtitle="Conceptual overview of sensing, edge perception, and distributed intelligence."&gt;
         &lt;div className="grid md:grid-cols-3 gap-6 text-left"&gt;
           &lt;div className="p-5 bg-card rounded-lg"&gt;
-            &lt;h3 className="text-xl font-semibold mb-2"&gt;1. Mantyx · 🔬 Optical Front-End&lt;/h3&gt;
+            &lt;h3 className="text-xl font-semibold mb-2"&gt;1. Mantyx · Optical Front-End&lt;/h3&gt;
             &lt;p className="text-textSecondary mb-3"&gt;High-performance EO/IR sensing for detection, identification, and tracking of small aerial objects under real-world conditions.&lt;/p&gt;
             &lt;div className="mb-3 flex justify-center"&gt;
               &lt;Image src="/images/Mantyx.png" alt="Mantyx optical front-end" width={240} height={360} className="rounded-md object-cover" /&gt;
             &lt;/div&gt;
             &lt;ul className="space-y-2 text-textSecondary"&gt;
-              &lt;li&gt;🌙 Day / night / adverse weather&lt;/li&gt;
-              &lt;li&gt;🔮 Long-range, passive detection&lt;/li&gt;
-              &lt;li&gt;🧬 Designed for scalable deployment&lt;/li&gt;
+              &lt;li&gt;Day / night / adverse weather&lt;/li&gt;
+              &lt;li&gt;Long-range, passive detection&lt;/li&gt;
+              &lt;li&gt;Designed for scalable deployment&lt;/li&gt;
             &lt;/ul&gt;
           &lt;/div&gt;
 &nbsp;
           &lt;div className="p-5 bg-card rounded-lg"&gt;
-            &lt;h3 className="text-xl font-semibold mb-2"&gt;2. Myrix Node · 🧩 Edge Perception&lt;/h3&gt;
+            &lt;h3 className="text-xl font-semibold mb-2"&gt;2. Myrix Node · Edge Perception&lt;/h3&gt;
             &lt;p className="text-textSecondary mb-3"&gt;On-device AI that processes sensor data locally and shares intelligence across the grid.&lt;/p&gt;
             &lt;div className="mb-3 flex justify-center"&gt;
               &lt;Image src="/images/Myrix.png" alt="Myrix AI" width={240} height={360} className="rounded-md object-cover" /&gt;
             &lt;/div&gt;
             &lt;ul className="space-y-2 text-textSecondary"&gt;
-              &lt;li&gt;📰 Real-time multi-sensor fusion&lt;/li&gt;
-              &lt;li&gt;📈 6D tracking &amp; trajectory estimation&lt;/li&gt;
-              &lt;li&gt;📡 Low latency, low bandwidth, GPS-optional&lt;/li&gt;
+              &lt;li&gt;Real-time multi-sensor fusion&lt;/li&gt;
+              &lt;li&gt;6D tracking &amp; trajectory estimation&lt;/li&gt;
+              &lt;li&gt;Low latency, low bandwidth, GPS-optional&lt;/li&gt;
             &lt;/ul&gt;
           &lt;/div&gt;
 &nbsp;
           &lt;div className="p-5 bg-card rounded-lg"&gt;
-            &lt;h3 className="text-xl font-semibold mb-2"&gt;3. Nexus · 🧠 Command &amp; Intelligence&lt;/h3&gt;
+            &lt;h3 className="text-xl font-semibold mb-2"&gt;3. Nexus · Command &amp; Intelligence&lt;/h3&gt;
             &lt;p className="text-textSecondary mb-3"&gt;Distributed intelligence layer that aggregates insights and enables coordinated response.&lt;/p&gt;
             &lt;ul className="space-y-2 text-textSecondary"&gt;
-              &lt;li&gt;🧪 Local fusion &amp; global consistency&lt;/li&gt;
-              &lt;li&gt;🛠️ AI model updates from field data&lt;/li&gt;
-              &lt;li&gt;🧩 Interfaces to existing C2 / safety systems&lt;/li&gt;
+              &lt;li&gt;Local fusion &amp; global consistency&lt;/li&gt;
+              &lt;li&gt;AI model updates from field data&lt;/li&gt;
+              &lt;li&gt;Interfaces to existing C2 / safety systems&lt;/li&gt;
             &lt;/ul&gt;
           &lt;/div&gt;
         &lt;/div&gt;
@@ -430,6 +388,21 @@ export default function ProductPage() {
           &lt;p className="mt-3 text-xs opacity-70"&gt;Conceptual flow: sensors → edge nodes → distributed intelligence. No screenshots; high-level diagram only.&lt;/p&gt;
         &lt;/div&gt;
       &lt;/Section&gt;
+&nbsp;
+      {/* 2. The Problem We Solve */}
+      &lt;Section title="Why classical systems fail in low-altitude airspace" subtitle="Defending airspace today is a data and perception problem — not a weapons problem."&gt;
+        &lt;div className="grid md:grid-cols-2 gap-4 text-left"&gt;
+          &lt;FeatureCard icon={&lt;&gt;🛩️&lt;/&gt;} title="Below radar" desc="Small autonomous drones operate under traditional thresholds." /&gt;
+          &lt;FeatureCard icon={&lt;&gt;🛡️&lt;/&gt;} title="Centralized fragility" desc="Slow, expensive, brittle architectures can't keep up." /&gt;
+          &lt;FeatureCard icon={&lt;&gt;🎬&lt;/&gt;} title="Adaptive threats" desc="Static detectors lose against fast-evolving tactics." /&gt;
+          &lt;FeatureCard icon={&lt;&gt;👀&lt;/&gt;} title="Perception bottleneck" desc="Seeing, understanding, and tracking is the constraint." /&gt;
+        &lt;/div&gt;
+      &lt;/Section&gt;
+      
+      
+&nbsp;
+&nbsp;
+      
 &nbsp;
       {/* 4. Differentiation */}
       &lt;Section title="What makes Swarm.ai fundamentally different" subtitle="Designed around decentralization, edge perception, and continuous learning."&gt;
@@ -484,7 +457,7 @@ export default function ProductPage() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-16T22:29:09.068Z
+                at 2025-12-17T14:47:27.462Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
