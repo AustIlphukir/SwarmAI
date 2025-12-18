@@ -5,8 +5,10 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => null);
-    const key = body?.key;
-    const passkey = process.env.HOMEPAGE_PASSKEY || process.env.NEXT_PUBLIC_HOMEPAGE_PASSKEY;
+    const keyRaw = body?.key;
+    const passkeyRaw = process.env.HOMEPAGE_PASSKEY || process.env.NEXT_PUBLIC_HOMEPAGE_PASSKEY;
+    const key = typeof keyRaw === 'string' ? keyRaw.trim() : undefined;
+    const passkey = typeof passkeyRaw === 'string' ? passkeyRaw.trim() : undefined;
 
     if (!passkey) {
       return NextResponse.json({ success: false, error: 'server passkey not configured' }, { status: 500 });
