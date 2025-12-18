@@ -19,7 +19,9 @@ describe('HomePage unlocked view', () => {
 
   test('renders product cards and videos', () => {
     render(<HomePage />);
-    expect(screen.getAllByRole('link', { name: /1 — Real-Time Perception at the Edge/i })[0]).toBeTruthy();
+    // Check for product cards with links to /product
+    const productLinks = screen.getAllByRole('link', { name: /See\. Real-Time Perception/i });
+    expect(productLinks.length).toBeGreaterThan(0);
     // video element should be present in the DOM
     expect(document.querySelector('video')).toBeTruthy();
   });
