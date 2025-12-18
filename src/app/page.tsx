@@ -110,7 +110,7 @@ export default function HomePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ key: enteredKey }),
+        body: JSON.stringify({ key: enteredKey.trim() }),
       });
       const j = await res.json().catch(() => ({}));
       if (j && j.success) {
@@ -371,9 +371,9 @@ export default function HomePage() {
       <section>
         <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <Link href="/product" className="block bg-card rounded-xl p-6 shadow-md space-y-2 hover:shadow-lg transition-shadow">
-            <h3 className="text-3xl font-bold mb-4">1 — Real-Time Perception at the Edge</h3>
-            <p className="text-textSecondary"><span className="text-accent1 font-semibold">See. Understand. React — instantly.</span><br />
-              We provide cost-effective detection technologies from sensor to chip on the edge. Our perception models follow modern paradigms, no training by user required. Up to 5 km radius per sensor device.<br />
+            <h3 className="text-center text-4xl font-bold mb-4">1 </h3>
+            <p className="text-textSecondary"><span className="text-accent1 font-semibold">See. Real-Time Perception at the Edge</span><br />
+              We provide cost-effective detection technologies from sensor to chip on the edge. Our perception models are the result of state-of-the-art research. Up to 5 km radius per sensor device.<br />
               <span className="text-sm">All Sensors · All Platforms · On the Edge</span></p>
               <video
                   src="/videos/Drone_Animation_From_Thermal_Image.mp4"
@@ -386,9 +386,9 @@ export default function HomePage() {
                 </video>
           </Link>
           <Link href="/product" className="block bg-card rounded-xl p-6 shadow-md space-y-2 hover:shadow-lg transition-shadow">
-            <h3 className="text-3xl font-bold mb-4">2 — AI-Native Sensor Intelligence</h3>
-            <p className="text-textSecondary"><span className="text-accent1 font-semibold">AI built for the physical world.</span><br />
-            Swarm.ai fuses vision, thermal, acoustic, and existing sensors into a single, continuously learning perception system — deployed, trained, and improved directly from the field.
+            <h3 className="text-center text-4xl font-bold mb-4">2</h3>
+            <p className="text-textSecondary"><span className="text-accent1 font-semibold">Understand. AI built for the physical world.</span><br />
+            Swarm.ai applies all perception directly at the sensors on the edge. Our 3D perception system fuses vision, thermal, acoustic, and existing sensors into a single, continuously updated 3D airspace model. 
             <br />
             <span className="text-sm">Multi-Modal · Distributed · Research-Driven</span></p>
              <video
@@ -402,8 +402,8 @@ export default function HomePage() {
                 </video>
           </Link>
           <Link href="/product" className="block bg-card rounded-xl p-6 shadow-md space-y-2 hover:shadow-lg transition-shadow">
-            <h3 className="text-3xl font-bold mb-4">3 — Built for Regulated & Critical Environments</h3>
-            <p className="text-textSecondary"><span className="text-accent1 font-semibold">Engineered for where failure is not an option.</span><br />Engineered for where failure is not an option. Designed from day one for regulated, safety-critical markets — from defence and aerospace to critical infrastructure and mobility.
+            <h3 className="text-center  text-4xl font-bold mb-4">3</h3>
+            <p className="text-textSecondary"><span className="text-accent1 font-semibold">React. Engineered for mission-critical reliability.</span><br />Built for Critical Environments. Designed from day one for regulated, safety-critical markets — from defence and aerospace to critical infrastructure and mobility.
             <br />
               <span className="text-sm">Defence · Aerospace · Critical Infrastructure</span></p>
               <p className='inline-flex items-center gap-2 px-6 py-3 bg-accent2 text-white rounded-lg hover:bg-accent1/80 transition-colors font-semibold"'>
