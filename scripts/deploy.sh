@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # SwarmAI Deployment Script
-# Deploys via GitHub Actions to Azure Static Web Apps
+# Deploys via GitHub Actions to Azure Web App
 
 set -e
 
@@ -61,11 +61,10 @@ echo ""
 echo "📡 GitHub Actions will now:"
 echo "   1. Run tests"
 echo "   2. Build the Next.js app"
-echo "   3. Deploy to Azure Static Web Apps"
+echo "   3. Deploy to Azure Web App"
 echo ""
 echo "🔗 Check deployment status:"
 echo "   https://github.com/AustIlphukir/SwarmAI/actions"
 echo ""
-echo "🌐 Your site (after deployment):"
-echo "   https://happy-pond-0cc717910.4.azurestaticapps.net"
+echo "⏱️  Deployment typically takes 3-5 minutes"
 echo ""
