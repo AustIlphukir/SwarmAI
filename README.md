@@ -1,13 +1,86 @@
+# SwarmAI Homepage
+
+A minimal Next.js 14 application with passkey-protected marketing homepage. Users unlock access with a passkey, and their session persists via HttpOnly cookies and localStorage.
+
+## Overview
+
+- **Framework:** Next.js 14 (App Router)
+- **Runtime:** Node.js (Next.js standalone runtime for API routes)
+- **Styling:** Tailwind CSS with custom design tokens
+- **Database:** Supabase (for subscriber management)
+- **Deployment:** Azure Static Web Apps with GitHub Actions
+
+The homepage features:
+- ✅ Passkey-protected unlock flow (`/api/unlock`)
+- ✅ Newsletter subscription modal with snooze/max-shows logic (`/api/subscribe`)
+- ✅ Persisted unlock state (localStorage + HttpOnly cookie)
+- ✅ Video background hero section
+- ✅ Feature cards and internal navigation
+- ✅ Admin database management endpoints
+
+## Project Structure
+
+```
+├── src/
+│   ├── app/
+│   │   ├── api/                    # Next.js API routes
+│   │   │   ├── unlock/             # POST: Unlock homepage with passkey
+│   │   │   ├── subscribe/          # POST: Newsletter subscription
+│   │   │   ├── lock/               # POST: Lock homepage (clear cookie)
+│   │   │   ├── status/             # GET: Check unlock status
+│   │   │   └── admin/db/           # POST: DB migrations & resets
+│   │   ├── page.tsx                # Homepage (passkey + CTA modal)
+│   │   ├── about/                  # About page
+│   │   ├── contact/                # Contact page
+│   │   ├── product/                # Product page
+│   │   ├── services/               # Services page
+│   │   └── __tests__/              # Component tests
+│   ├── components/                 # Reusable React components
+│   ├── middleware.ts               # Next.js middleware (optional route protection)
+│   └── globals.css                 # Global styles
+├── public/                         # Static assets (images, videos)
+├── scripts/                        # Shell scripts for DB management
+├── .github/workflows/              # GitHub Actions CI/CD
+├── jest.config.ts                  # Test configuration
+├── jest.setup.ts                   # Jest setup (matchers, mocks)
+├── staticwebapp.config.json        # Azure SWA runtime config
+├── tailwind.config.js              # Tailwind CSS config
+├── tsconfig.json                   # TypeScript config
+├── package.json                    # Dependencies & scripts
+└── deploy.sh                       # Interactive deployment script
+```
+
 ## API Routes
 
-All API endpoints are Next.js API routes in `src/app/api/`:
+All endpoints are Next.js API routes in `src/app/api/`:
 
-- **`/api/unlock`** - POST: Unlock homepage with passkey (sets HttpOnly cookie + localStorage)
-- **`/api/lock`** - POST: Lock homepage (clears cookie)
-- **`/api/status`** - GET: Check unlock status (reads cookie)
-- **`/api/subscribe`** - POST: Subscribe to product updates (stores in Supabase)
-- **`/api/admin/db/migrate`** - POST: Run DB migrations (requires ADMIN_TOKEN)
-- **`/api/admin/db/reset`** - POST: Reset DB schema (requires ADMIN_TOKEN)
+### Public Endpoints
+
+- **POST `/api/unlock`** - Unlock homepage with passkey
+  - Request body: `{ key: string }`
+  - Response: `{ success: boolean, error?: string }`
+  - Sets HttpOnly cookie `swarm_home_unlocked=1`
+
+- **POST `/api/subscribe`** - Subscribe to product updates
+  - Request body: `{ role: string, email?: string, consent: boolean }`
+  - Response: `{ ok: boolean, note?: string }`
+  - Stores subscriber data in Supabase (with IP hash for telemetry)
+
+- **POST `/api/lock`** - Clear unlock session
+  - Response: `{ ok: boolean }`
+  - Clears `swarm_home_unlocked` cookie
+
+- **GET `/api/status`** - Check if user is unlocked
+  - Response: `{ unlocked: boolean }`
+  - Reads from HttpOnly cookie (server-side validation)
+
+### Admin Endpoints
+
+- **POST `/api/admin/db/migrate`** - Run database migrations
+  - Requires: `Authorization: Bearer {ADMIN_TOKEN}`
+
+- **POST `/api/admin/db/reset`** - Reset database schema
+  - Requires: `Authorization: Bearer {ADMIN_TOKEN}`
 
 ## Local Development
 
@@ -15,112 +88,83 @@ All API endpoints are Next.js API routes in `src/app/api/`:
 # Install dependencies
 npm install
 
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with:
+#   HOMEPAGE_PASSKEY=your-test-key
+#   SUPABASE_URL=your-supabase-url
+#   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
 # Run development server
 npm run dev
+# Open http://localhost:3000
 
 # Run tests
 npm test
 
-# Build for production
-npm run build
+# Run tests in watch mode
+npm test -- --watch
 ```
 
-**Environment Setup:**
-1. Copy `.env` with required variables (see Azure SWA section below)
-2. Update `NEXT_PUBLIC_HOMEPAGE_PASSKEY` for local testing
-3. Configure Supabase credentials if using subscribe feature
+## Environment Variables
 
-## Deployment
+### Required (Server-side)
 
-### Quick Deploy (Recommended)
+- **`HOMEPAGE_PASSKEY`** or **`NEXT_PUBLIC_HOMEPAGE_PASSKEY`** - Plaintext passkey for `/api/unlock`
+- **`SUPABASE_URL`** - Supabase project URL (for `/api/subscribe`)
+- **`SUPABASE_SERVICE_ROLE_KEY`** - Supabase service role key (must run on Node runtime)
 
-```bash
-./deploy.sh
-```
+### Optional
 
-This interactive script will:
-- Check git status
-- Prompt for commit & push
-- Automatically merge to `main` if needed
-- Trigger GitHub Actions deployment to Azure SWA
+- **`IP_HASH_SALT`** - Random 32+ char string for privacy-preserving IP hashing in subscriber telemetry
+- **`ADMIN_TOKEN`** - Token for admin DB management endpoints
+- **`NODE_ENV`** - Set to `production` for secure cookie flags in `/api/unlock`
 
-### Manual Deploy
+## Key Features & Behaviors
 
-```bash
-git add .
-git commit -m "Your message"
-git push origin main  # Triggers automatic Azure deployment
-```
+### 1. Passkey Unlock Flow
 
-The GitHub Actions workflow will automatically:
-- Run all tests
-- Build the Next.js app
-- Deploy to Azure Static Web Apps
+Users enter a passkey on the locked homepage. Once verified via `/api/unlock`:
+- ✅ HttpOnly cookie `swarm_home_unlocked=1` is set (30 days max-age)
+- ✅ Client stores `'1'` in localStorage under key `swarm_home_unlocked`
+- ✅ Homepage content is revealed
+- ✅ On future visits, localStorage prevents re-prompting
 
-## Azure Static Web Apps Deployment
+**File:** `src/app/page.tsx`
 
-This project is configured for Azure Static Web Apps with Next.js:
+### 2. Newsletter Subscription Modal
 
-1. Build command: `npm run build`
-2. Output location: `.next` (Next.js standalone build)
-3. API routes are handled by Next.js runtime (Node.js 18)
-4. Runtime configuration: `staticwebapp.config.json`
+The modal follows these rules (stored in localStorage under `swarm_role_modal_meta`):
+- Shows only if less than 3 times shown (`MAX_SHOWS=3`)
+- "Not now" button snoozes for 14 days (`SNOOZE_DAYS=14`)
+- On subscribe, data is upserted to Supabase with:
+  - Email (normalized to lowercase, optional)
+  - Role (required, 1-64 chars)
+  - Consent flag (required if email provided)
+  - IP hash (privacy-preserving telemetry)
 
-### GitHub Actions Workflow
+**File:** `src/app/page.tsx`
 
-The deployment workflow (`.github/workflows/azure-static-web-apps-*.yml`) does:
+### 3. Local Storage Keys
 
-1. ✅ Checkout code
-2. ✅ Setup Node.js 18
-3. ✅ Install dependencies (`npm ci`)
-4. ✅ Run tests (`npm test`)
-5. ✅ Build Next.js app (`npm run build`)
-6. ✅ Deploy to Azure Static Web Apps
+| Key | Purpose | Value Type |
+|-----|---------|------------|
+| `swarm_home_unlocked` | Unlock state persistence | `'1'` or empty |
+| `swarm_role_modal_meta` | CTA modal visibility tracking | JSON: `{ totalShows, lastShowTs, lastDismissTs }` |
 
-**Deployment Status:** [View on GitHub Actions](https://github.com/AustIlphukir/SwarmAI/actions)
+### 4. Database Schema (Supabase)
 
-### Required GitHub Secrets
-
-Configure these in your GitHub repository settings (Settings → Secrets and variables → Actions):
-
-- **`AZURE_STATIC_WEB_APPS_API_TOKEN_HAPPY_POND_0CC717910`** - Azure SWA deployment token (auto-generated)
-- **`HOMEPAGE_PASSKEY`** - Passkey for unlocking the homepage
-- **`SUPABASE_URL`** - Supabase project URL
-- **`SUPABASE_SERVICE_ROLE_KEY`** - Supabase service role key (for subscribe endpoint)
-- **`IP_HASH_SALT`** - Salt for IP hashing (optional, for privacy)
-- **`ADMIN_TOKEN`** - Token for admin API routes (DB management)
-
-### Azure Static Web Apps Environment Variables
-
-After deployment, also configure these in Azure Portal (Static Web App → Configuration):
-
-- `HOMEPAGE_PASSKEY`
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `IP_HASH_SALT`
-- `ADMIN_TOKEN`
-- `NODE_ENV=production`
-
-## Project Structure
-
-```
-├── src/
-│   ├── app/
-│   │   ├── api/              # Next.js API routes
-│   │   │   ├── unlock/       # Homepage unlock endpoint
-│   │   │   ├── subscribe/    # Newsletter subscription
-│   │   │   └── admin/        # Admin endpoints (DB management)
-│   │   ├── page.tsx          # Homepage with passkey protection
-│   │   ├── about/            # About page
-│   │   ├── contact/          # Contact page
-│   │   └── product/          # Product page
-│   ├── components/           # Reusable React components
-│   └── middleware.ts         # Next.js middleware (route protection)
-├── public/                   # Static assets (images, videos)
-├── .github/workflows/        # GitHub Actions deployment config
-├── staticwebapp.config.json  # Azure SWA runtime configuration
-├── deploy.sh                 # Interactive deployment script
-└── jest.config.ts            # Test configuration
+The `subscribers` table structure (managed via migrations):
+```sql
+CREATE TABLE subscribers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email_norm TEXT UNIQUE,
+  role TEXT NOT NULL,
+  consent BOOLEAN,
+  ip_hash TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(email_norm, role)
+);
 ```
 
 ## Testing
@@ -133,11 +177,172 @@ npm test
 npm test -- --watch
 
 # Run specific test file
-npm test -- path/to/test.test.tsx
+npm test -- src/app/__tests__/HomePage.test.tsx
+
+# Generate coverage report
+npm test -- --coverage
 ```
 
-**Test Coverage:**
-- Current coverage: ~71% statements, ~76% lines
-- All 41 tests passing
-- Coverage thresholds configured in `jest.config.ts`
+**Test Files:**
+- `src/app/__tests__/HomePage.test.tsx` - Homepage unlocked state
+- `src/app/__tests__/page.unlock.test.tsx` - Unlock flow
+- `src/app/__tests__/page.cta.test.tsx` - CTA modal logic
+- `src/app/__tests__/page.unlocked.test.tsx` - Unlocked view
+- `src/__tests__/middleware.test.ts` - Route middleware
 
+**Coverage:** ~71% statements, ~76% lines (41 tests passing)
+
+**Testing best practices:**
+- Use `jest.useFakeTimers()` for timer-dependent tests
+- Mock `global.fetch` for API calls to avoid real network requests
+- Clear localStorage in `beforeEach` to avoid test pollution
+- Use `@testing-library/react` with `getByRole()` for accessible selectors
+
+## Deployment
+
+### Azure Static Web Apps (Recommended)
+
+This project is configured for automatic deployment via GitHub Actions.
+
+**Quick Deploy Script:**
+```bash
+./deploy.sh
+```
+
+This interactive script will:
+- Check git status and prompt for commit
+- Push to your branch and merge to `main` if needed
+- Trigger GitHub Actions workflow (automatic Azure deployment)
+
+**Manual Deployment:**
+```bash
+git add .
+git commit -m "Your changes"
+git push origin main
+# GitHub Actions automatically builds, tests, and deploys to Azure SWA
+```
+
+### GitHub Actions Workflow
+
+Located in `.github/workflows/azure-static-web-apps-*.yml`. The workflow:
+
+1. ✅ Checks out code
+2. ✅ Sets up Node.js 18+
+3. ✅ Installs dependencies (`npm ci`)
+4. ✅ Runs tests (`npm test`)
+5. ✅ Builds Next.js app (`npm run build`)
+6. ✅ Deploys to Azure Static Web Apps
+
+### Azure Static Web Apps Configuration
+
+**Build Configuration (Azure Portal):**
+- Build command: `npm run build`
+- Output location: `.next` (Next.js standalone)
+- API runtime: Node.js 18
+
+**Runtime Configuration:**
+- Handled by `staticwebapp.config.json` (routes, rewrites, auth)
+- Next.js API routes run on Node.js runtime (not Edge)
+
+### Required GitHub Secrets
+
+Configure these in **Settings → Secrets and variables → Actions**:
+
+- **`AZURE_STATIC_WEB_APPS_API_TOKEN_*`** - Auto-generated by Azure SWA
+- **`HOMEPAGE_PASSKEY`** - Passkey for homepage unlock
+- **`SUPABASE_URL`** - Supabase project URL
+- **`SUPABASE_SERVICE_ROLE_KEY`** - Supabase service role key
+- **`IP_HASH_SALT`** - Random salt for IP hashing (optional)
+- **`ADMIN_TOKEN`** - Token for admin API routes (optional)
+
+### Production Environment Variables
+
+Also configure in **Azure Portal → Static Web App → Configuration**:
+- `HOMEPAGE_PASSKEY`
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `IP_HASH_SALT` (optional)
+- `NODE_ENV=production` (recommended)
+
+## Build & Production
+
+```bash
+# Build the application
+npm run build
+
+# Start production server locally
+npm start
+
+# Export as static site (if needed)
+npm run export
+```
+
+**Build artifacts:**
+- `.next/` - Next.js compiled output (standalone build)
+- `.next/static/` - JavaScript, CSS, images
+- `public/` - Public assets (copied to output)
+
+## Project Conventions
+
+### Code Style
+
+- **Client Components:** Use `"use client"` at top of files that need browser APIs
+- **Server Components:** Default for route handlers and server-only logic
+- **Styling:** Tailwind CSS utility classes + design tokens (`bg-card`, `text-accent1`)
+- **Components:** Live under `src/components/` or co-located in `src/app/[route]/`
+
+### Naming Conventions
+
+- Local storage keys: `snake_case` prefixed with `swarm_` (e.g., `swarm_home_unlocked`)
+- API routes: lowercase, descriptive (e.g., `/api/unlock`, `/api/subscribe`)
+- Constants: `UPPER_SNAKE_CASE` (e.g., `MAX_SHOWS`, `SNOOZE_DAYS`)
+- Environment variables: `UPPER_SNAKE_CASE` with underscore separators
+
+### Accessibility
+
+- All interactive elements have proper ARIA labels
+- Modals use `role="dialog"` and `aria-modal="true"`
+- Color contrast meets WCAG AA standards
+- Keyboard navigation fully supported
+
+## Troubleshooting
+
+### Unlock Not Working
+
+1. **Check environment variable:** Verify `HOMEPAGE_PASSKEY` is set in `.env.local` or Azure
+2. **Check browser console:** Network errors in `/api/unlock` call?
+3. **Clear localStorage:** Open DevTools → Application → Clear Storage
+4. **Verify cookie:** Check DevTools → Application → Cookies for `swarm_home_unlocked`
+
+### Subscribe Endpoint Failing
+
+1. **Verify Supabase credentials:** Check `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`
+2. **Check database:** Ensure `subscribers` table exists in Supabase (run migrations)
+3. **Email validation:** Verify email format matches `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
+4. **Consent requirement:** Email subscriptions require `consent: true`
+
+### Tests Failing
+
+1. **Clear coverage:** `rm -rf coverage/`
+2. **Reinstall packages:** `rm -rf node_modules package-lock.json && npm install`
+3. **Check Node version:** Requires Node.js 18+ (or use `nvm`)
+4. **Run with verbose:** `npm test -- --verbose`
+
+## Contributing
+
+Before pushing changes:
+1. Run tests: `npm test`
+2. Check coverage: Coverage report in `coverage/lcov-report/index.html`
+3. Build locally: `npm run build`
+4. Use the deploy script: `./deploy.sh`
+
+## License
+
+Proprietary — SwarmAI Technologies GmbH
+
+## Support
+
+For issues or questions:
+- Create a GitHub issue
+- Check existing documentation in `.github/copilot-instructions.md`
+- Review test files for usage examples
