@@ -3,14 +3,18 @@ name: Azure Web App CI/CD
 on:
   push:
     branches:
-      - main
+      - prod
   pull_request:
     branches:
-      - main
+      - prod
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+
+concurrency:
+  group: azure-webapp-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -22,6 +26,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Validate required secrets
+        run: |
+          set -e
+          missing=0
+          for var in AZURE_WEB_APP_NAME AZURE_CREDENTIALS HOMEPAGE_PASSKEY SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY; do
+            if [ -z "${!var}" ]; then
+              echo "Missing secret: $var"
+              missing=1
+            fi
+          done
+          if [ "$missing" -eq 1 ]; then
+            echo "One or more required secrets are missing."
+            exit 1
+          fi
+        env:
+          AZURE_WEB_APP_NAME: ${{ secrets.AZURE_WEB_APP_NAME }}
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+          HOMEPAGE_PASSKEY: ${{ secrets.HOMEPAGE_PASSKEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -43,6 +68,9 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           IP_HASH_SALT: ${{ secrets.IP_HASH_SALT }}
       
+      - name: Prune dev dependencies for deploy
+        run: npm ci --omit=dev
+      
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -53,6 +81,7 @@ jobs:
             package.json
             package-lock.json
             public
+            next.config.js
 
   deploy:
     needs: build

@@ -4,9 +4,7 @@
 name: Build and deploy Node.js app to Azure Web App - swarm-ai-production
 
 on:
-  push:
-    branches:
-      - main
+  # Manual dispatch only; use azure-web-app-deploy.yml for automatic CI/CD
   workflow_dispatch:
 
 jobs:
