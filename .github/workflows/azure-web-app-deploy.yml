@@ -67,21 +67,13 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           IP_HASH_SALT: ${{ secrets.IP_HASH_SALT }}
-      
-      - name: Prune dev dependencies for deploy
-        run: npm ci --omit=dev
-      
-      - name: Upload build artifacts
+
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: next-build
-          path: |
-            .next
-            node_modules
-            package.json
-            package-lock.json
-            public
-            next.config.js
+          path: .
+          include-hidden-files: true
 
   deploy:
     needs: build
@@ -89,9 +81,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/prod'
     
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Download build artifacts
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: next-build
@@ -132,6 +122,10 @@ jobs:
               {
                 "name": "WEBSITE_NODE_DEFAULT_VERSION",
                 "value": "22-lts"
+              },
+              {
+                "name": "PORT",
+                "value": "8080"
               }
             ]
       
