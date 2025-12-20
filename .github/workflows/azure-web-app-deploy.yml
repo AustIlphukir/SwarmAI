@@ -42,7 +42,6 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           IP_HASH_SALT: ${{ secrets.IP_HASH_SALT }}
-          ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
       
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -78,3 +77,27 @@ jobs:
         with:
           app-name: ${{ secrets.AZURE_WEB_APP_NAME }}
           package: '.'
+      
+      - name: Configure Azure App Settings
+        uses: azure/appservice-settings@v1
+        with:
+          app-name: ${{ secrets.AZURE_WEB_APP_NAME }}
+          app-settings-json: |
+            [
+              {
+                "name": "HOMEPAGE_PASSKEY",
+                "value": "${{ secrets.HOMEPAGE_PASSKEY }}"
+              },
+              {
+                "name": "SUPABASE_URL",
+                "value": "${{ secrets.SUPABASE_URL }}"
+              },
+              {
+                "name": "SUPABASE_SERVICE_ROLE_KEY",
+                "value": "${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
+              },
+              {
+                "name": "IP_HASH_SALT",
+                "value": "${{ secrets.IP_HASH_SALT }}"
+              }
+            ]

@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 20
     name: Build and Deploy Job
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           lfs: false
@@ -37,6 +37,9 @@ jobs:
         run: npm run build
         env:
           NEXT_PUBLIC_HOMEPAGE_PASSKEY: ${{ secrets.HOMEPAGE_PASSKEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          IP_HASH_SALT: ${{ secrets.IP_HASH_SALT }}
       
       - name: Build And Deploy
         id: builddeploy
