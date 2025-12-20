@@ -128,5 +128,16 @@ jobs:
               {
                 "name": "IP_HASH_SALT",
                 "value": "${{ secrets.IP_HASH_SALT }}"
+              },
+              {
+                "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                "value": "22-lts"
               }
             ]
+      
+      - name: Set Startup Command
+        run: |
+          az webapp config set \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --name ${{ secrets.AZURE_WEB_APP_NAME }} \
+            --startup-file "npm start"
