@@ -1,3 +1,5 @@
+[![Azure Web App CI/CD](https://github.com/AustIlphukir/SwarmAI-Homepage/actions/workflows/azure-web-app-deploy.yml/badge.svg)](https://github.com/AustIlphukir/SwarmAI-Homepage/actions/workflows/azure-web-app-deploy.yml)
+
 # SwarmAI Homepage
 
 A minimal Next.js 14 application with passkey-protected marketing homepage. Users unlock access with a passkey, and their session persists via HttpOnly cookies and localStorage.
