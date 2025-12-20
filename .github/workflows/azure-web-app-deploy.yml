@@ -128,10 +128,3 @@ jobs:
                 "value": "8080"
               }
             ]
-      
-      - name: Set Startup Command
-        run: |
-          az webapp config set \
-            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            --name ${{ secrets.AZURE_WEB_APP_NAME }} \
-            --startup-file "npm start"
