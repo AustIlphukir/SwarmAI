@@ -68,7 +68,7 @@ if command -v gh &> /dev/null; then
     if gh workflow run "prod_swarm-ai-production" --ref prod -R "$REPO_SLUG"; then
         echo "✅ Deployment workflow triggered!"
     else
-        echo "❌ Failed to trigger workflow 'prod_swarm-ai-production'."
+        echo "❌ Failed to trigger workflow 'prod_swarm-ai-production.yml'."
         echo "   Ensure this workflow exists on the repository's default branch,"
         echo "   or trigger it manually from the Actions tab selecting branch 'prod'."
         exit 1
