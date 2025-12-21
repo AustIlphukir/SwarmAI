@@ -5,6 +5,7 @@ yarn.lock
 
 # Next.js
 .next
+.swc
 out
 .vercel
 

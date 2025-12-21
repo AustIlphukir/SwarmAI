@@ -1,55 +1,141 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy Node.js app to Azure Web App - swarm-ai-production
+name: Azure Web App CI/CD
 
 on:
-  # Manual dispatch only; use azure-web-app-deploy.yml for automatic CI/CD
+  # Manual dispatch only - trigger via GitHub Actions UI or gh CLI
   workflow_dispatch:
+  pull_request:
+    branches:
+      - prod
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+concurrency:
+  group: azure-webapp-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
+      packages: write
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: prod
-
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22.x'
-
-      - name: npm install, build, and test
+      
+      - name: Validate required secrets
         run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+          set -e
+          missing=0
+          for var in AZURE_WEB_APP_NAME AZURE_CREDENTIALS HOMEPAGE_PASSKEY SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY; do
+            if [ -z "${!var}" ]; then
+              echo "Missing secret: $var"
+              missing=1
+            fi
+          done
+          if [ "$missing" -eq 1 ]; then
+            echo "One or more required secrets are missing."
+            exit 1
+          fi
+        env:
+          AZURE_WEB_APP_NAME: ${{ secrets.AZURE_WEB_APP_NAME }}
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+          HOMEPAGE_PASSKEY: ${{ secrets.HOMEPAGE_PASSKEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: npm test
+      
+      - name: Build Next.js app
+        run: npm run build
+        env:
+          NEXT_PUBLIC_HOMEPAGE_PASSKEY: ${{ secrets.HOMEPAGE_PASSKEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          IP_HASH_SALT: ${{ secrets.IP_HASH_SALT }}
+      
+      - name: Copy standalone output
+        run: |
+          cp -r .next/standalone/* ./deploy/
+          cp -r .next/static ./deploy/.next/static
+          cp -r public ./deploy/public
+          cp package.json ./deploy/package.json
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
-          path: .
+          name: next-build
+          path: deploy
 
   deploy:
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
     
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: node-app
+          name: next-build
       
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'swarm-ai-production'
-          slot-name: 'Production'
-          package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_45427F4A2D1E4B94B522ABE98663D23D }}
+          app-name: ${{ secrets.AZURE_WEB_APP_NAME }}
+          package: '.'
+      
+      - name: Configure Azure App Settings
+        uses: azure/appservice-settings@v1
+        with:
+          app-name: ${{ secrets.AZURE_WEB_APP_NAME }}
+          app-settings-json: |
+            [
+              {
+                "name": "HOMEPAGE_PASSKEY",
+                "value": "${{ secrets.HOMEPAGE_PASSKEY }}"
+              },
+              {
+                "name": "SUPABASE_URL",
+                "value": "${{ secrets.SUPABASE_URL }}"
+              },
+              {
+                "name": "SUPABASE_SERVICE_ROLE_KEY",
+                "value": "${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
+              },
+              {
+                "name": "IP_HASH_SALT",
+                "value": "${{ secrets.IP_HASH_SALT }}"
+              },
+              {
+                "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                "value": "22-lts"
+              },
+              {
+                "name": "PORT",
+                "value": "8080"
+              }
+            ]
+      
+      - name: Set Startup Command
+        run: |
+          az webapp config set \
+            --name ${{ secrets.AZURE_WEB_APP_NAME }} \
+            --startup-file "node server.js"
