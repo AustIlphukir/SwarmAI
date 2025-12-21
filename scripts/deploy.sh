@@ -64,8 +64,8 @@ echo "🚀 Triggering manual deployment workflow..."
 if command -v gh &> /dev/null; then
     # Simple, direct trigger of the desired workflow on prod
     REPO_SLUG="AustIlphukir/SwarmAI-Homepage"
-    echo "🛠️  Using workflow: prod_swarm-ai-production (ref: prod)"
-    if gh workflow run "prod_swarm-ai-production" --ref prod -R "$REPO_SLUG"; then
+    echo "🛠️  Using workflow: prod_swarm-ai-production.yml (ref: prod)"
+    if gh workflow run "prod_swarm-ai-production.yml" --ref prod -R "$REPO_SLUG"; then
         echo "✅ Deployment workflow triggered!"
     else
         echo "❌ Failed to trigger workflow 'prod_swarm-ai-production.yml'."
