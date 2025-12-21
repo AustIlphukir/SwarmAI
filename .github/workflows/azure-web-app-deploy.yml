@@ -72,8 +72,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: next-build
-          path: .
-          include-hidden-files: true
+          path: |
+            .next
+            package.json
+            package-lock.json
+            public
+            next.config.js
+            src
+            postcss.config.js
+            tailwind.config.js
 
   deploy:
     needs: build
@@ -126,5 +133,13 @@ jobs:
               {
                 "name": "PORT",
                 "value": "8080"
+              },
+              {
+                "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+                "value": "true"
+              },
+              {
+                "name": "POST_BUILD_COMMAND",
+                "value": "npm install --production"
               }
             ]
