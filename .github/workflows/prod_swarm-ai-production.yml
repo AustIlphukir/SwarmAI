@@ -43,7 +43,7 @@ jobs:
         with:
           name: node-app
 
-      - name: Clean remote .next to avoid rsync conflicts
+      - name: Clean remote wwwroot to avoid rsync conflicts
         env:
           PUBLISH_PROFILE: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0C2B872A84BF42708DCC574AE97385CF }}
           SITE_NAME: swarm-ai-production
@@ -51,10 +51,11 @@ jobs:
           USER=$(echo "$PUBLISH_PROFILE" | sed -n 's/.*userName="\([^" ]*\)".*/\1/p')
           PASS=$(echo "$PUBLISH_PROFILE" | sed -n 's/.*userPWD="\([^" ]*\)".*/\1/p')
           AUTH=$(printf "%s:%s" "$USER" "$PASS" | base64)
+          # Fully clear target directory to prevent rsync symlink/dir collisions
           curl -s -X POST "https://${SITE_NAME}.scm.azurewebsites.net/api/command" \
             -H "Authorization: Basic $AUTH" \
             -H "Content-Type: application/json" \
-            -d '{"command":"rm -rf /home/site/wwwroot/.next /home/site/wwwroot/.next/standalone || true"}' || true
+            -d '{"command":"rm -rf /home/site/wwwroot/* /home/site/wwwroot/.[!.]* /home/site/wwwroot/..?* || true"}' || true
       
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
