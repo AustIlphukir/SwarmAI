@@ -19,7 +19,7 @@ export default function ProductPage() {
       <Section title="The Three Layers of Swarm.ai" subtitle="Conceptual overview of sensing, edge perception, and distributed intelligence.">
         <div className="grid md:grid-cols-3 gap-6 text-left">
           <div className="p-5 bg-card rounded-lg">
-            <h3 className="text-xl font-semibold mb-2">1. Mantyx · Optical Front-End</h3>
+            <h3 className="text-xl font-semibold mb-2">Mantyx sensor· Optical Front-End</h3>
             <p className="text-textSecondary mb-3">High-performance EO/IR sensing for detection, identification, and tracking of small aerial objects under real-world conditions.</p>
             <div className="mb-3 flex justify-center">
               <Image src="/images/Mantyx.png" alt="Mantyx optical front-end" width={240} height={360} className="rounded-md object-cover" />
@@ -32,7 +32,7 @@ export default function ProductPage() {
           </div>
 
           <div className="p-5 bg-card rounded-lg">
-            <h3 className="text-xl font-semibold mb-2">2. Myrix Node · Edge Perception</h3>
+            <h3 className="text-xl font-semibold mb-2">Myrix Node · Edge Perception</h3>
             <p className="text-textSecondary mb-3">On-device AI that processes sensor data locally and shares intelligence across the grid.</p>
             <div className="mb-3 flex justify-center">
               <Image src="/images/Myrix.png" alt="Myrix AI" width={240} height={360} className="rounded-md object-cover" />
@@ -45,8 +45,11 @@ export default function ProductPage() {
           </div>
 
           <div className="p-5 bg-card rounded-lg">
-            <h3 className="text-xl font-semibold mb-2">3. Nexus · Command & Intelligence</h3>
+            <h3 className="text-xl font-semibold mb-2">Nexus · Command & Intelligence</h3>
             <p className="text-textSecondary mb-3">Distributed intelligence layer that aggregates insights and enables coordinated response.</p>
+            <div className="my-12 flex justify-center">
+              <Image src="/images/mesh.png" alt="Nexus distributed intelligence" width={240} height={360} className="rounded-md object-cover" />
+            </div>
             <ul className="space-y-2 text-textSecondary">
               <li>Local fusion & global consistency</li>
               <li>AI model updates from field data</li>

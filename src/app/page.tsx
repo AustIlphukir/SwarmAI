@@ -339,7 +339,7 @@ export default function HomePage() {
         <div className="py-0 relative overflow-hidden flex flex-col items-center justify-center text-center px-4 relative z-10">
           <h1 className="text-6xl font-bold mb-4">Perception Systems for <span className="text-accent1 font-semibold">European Defence</span></h1>
           <p className="text-xl md:text-2xl text-textSecondary mb-6 max-w-2xl">
-            Swarm.AI provides <span className="text-accent1 font-semibold">AI perception</span> and multi‑target tracking solutions for modern civil and defence anti-drone operations. 
+            Swarm.ai provides <span className="text-accent1 font-semibold">AI perception</span> and multi‑target tracking solutions for modern civil and defence anti-drone operations. 
           </p>
           <Link 
             href="/contact" 
