@@ -43,6 +43,22 @@ jobs:
         with:
           name: node-app
       
+      - name: Clean old build (.next) on Azure Web App
+        env:
+          PUBLISH_PROFILE: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0C2B872A84BF42708DCC574AE97385CF }}
+          SITE_NAME: swarm-ai-production
+        run: |
+          # Extract Kudu (SCM) basic auth from publish profile
+          USER=$(echo "$PUBLISH_PROFILE" | sed -n 's/.*userName="\([^" ]*\)".*/\1/p')
+          PASS=$(echo "$PUBLISH_PROFILE" | sed -n 's/.*userPWD="\([^" ]*\)".*/\1/p')
+          AUTH=$(printf "%s:%s" "$USER" "$PASS" | base64)
+
+          # Remove previous .next to avoid rsync symlink conflicts
+          curl -s -X POST "https://${SITE_NAME}.scm.azurewebsites.net/api/command" \
+            -H "Authorization: Basic $AUTH" \
+            -H "Content-Type: application/json" \
+            -d '{"command":"rm -rf /home/site/wwwroot/.next"}' || true
+      
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3

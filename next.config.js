@@ -6,7 +6,6 @@ const isProd = process.env.NODE_ENV === "production";
 const nextConfig = {
   distDir: '.next',    
   reactStrictMode: true,
-  output: 'standalone',
   experimental: {
   },
   async redirects() {
