@@ -1,6 +1,18 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0a0d12;
+  --color-card: #11151c;
+  --color-textPrimary: #eaf2ff;
+  --color-textSecondary: #a6b3c6;
+  --color-accent1: #eaaa3b;
+  --color-accent2: #eaaa3b;
+  --color-warning: #ffb84d;
+  --color-danger: #ff6b6b;
+  
+  --radius-2xl: 1rem;
+  --radius-4xl: 2rem;
+}
 
 /* custom fonts can be imported here */
 html {

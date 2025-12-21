@@ -1,16 +1,19 @@
 name: Azure Web App CI/CD
 
 on:
-  push:
-    branches:
-      - main
+  # Manual dispatch only - trigger via GitHub Actions UI or gh CLI
+  workflow_dispatch:
   pull_request:
     branches:
-      - main
+      - prod
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+
+concurrency:
+  group: azure-webapp-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -22,6 +25,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Validate required secrets
+        run: |
+          set -e
+          missing=0
+          for var in AZURE_WEB_APP_NAME AZURE_CREDENTIALS HOMEPAGE_PASSKEY SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY; do
+            if [ -z "${!var}" ]; then
+              echo "Missing secret: $var"
+              missing=1
+            fi
+          done
+          if [ "$missing" -eq 1 ]; then
+            echo "One or more required secrets are missing."
+            exit 1
+          fi
+        env:
+          AZURE_WEB_APP_NAME: ${{ secrets.AZURE_WEB_APP_NAME }}
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+          HOMEPAGE_PASSKEY: ${{ secrets.HOMEPAGE_PASSKEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -43,26 +67,27 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           IP_HASH_SALT: ${{ secrets.IP_HASH_SALT }}
       
-      - name: Upload build artifacts
+      - name: Copy standalone output
+        run: |
+          mkdir -p deploy
+          cp -r .next/standalone/* ./deploy/
+          cp -r .next/static ./deploy/.next/static
+          cp -r public ./deploy/public
+          cp package.json ./deploy/package.json
+
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: next-build
-          path: |
-            .next
-            node_modules
-            package.json
-            package-lock.json
-            public
+          path: deploy
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch'
     
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Download build artifacts
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: next-build
@@ -99,5 +124,19 @@ jobs:
               {
                 "name": "IP_HASH_SALT",
                 "value": "${{ secrets.IP_HASH_SALT }}"
+              },
+              {
+                "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                "value": "22-lts"
+              },
+              {
+                "name": "PORT",
+                "value": "8080"
               }
             ]
+      
+      - name: Set Startup Command
+        run: |
+          az webapp config set \
+            --name ${{ secrets.AZURE_WEB_APP_NAME }} \
+            --startup-file "node server.js"
