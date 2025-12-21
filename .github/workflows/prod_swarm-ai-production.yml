@@ -42,13 +42,26 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
+
+      - name: Clean remote .next to avoid rsync conflicts
+        env:
+          PUBLISH_PROFILE: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0C2B872A84BF42708DCC574AE97385CF }}
+          SITE_NAME: swarm-ai-production
+        run: |
+          USER=$(echo "$PUBLISH_PROFILE" | sed -n 's/.*userName="\([^" ]*\)".*/\1/p')
+          PASS=$(echo "$PUBLISH_PROFILE" | sed -n 's/.*userPWD="\([^" ]*\)".*/\1/p')
+          AUTH=$(printf "%s:%s" "$USER" "$PASS" | base64)
+          curl -s -X POST "https://${SITE_NAME}.scm.azurewebsites.net/api/command" \
+            -H "Authorization: Basic $AUTH" \
+            -H "Content-Type: application/json" \
+            -d '{"command":"rm -rf /home/site/wwwroot/.next /home/site/wwwroot/.next/standalone || true"}' || true
       
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'swarm-ai-production'
-          slot-name: 'Production'
           package: .
           clean: true
+          restart: true
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0C2B872A84BF42708DCC574AE97385CF }}
