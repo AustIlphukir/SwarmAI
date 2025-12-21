@@ -71,6 +71,12 @@ if command -v gh &> /dev/null; then
     fi
 
     echo "📡 Checking available workflows on default branch for $REPO_SLUG..."
+    DEFAULT_BRANCH=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name -R "$REPO_SLUG" 2>/dev/null || echo "")
+    if [ -z "$DEFAULT_BRANCH" ]; then
+        echo "❌ Could not determine default branch."
+        exit 1
+    fi
+
     if gh workflow list -R "$REPO_SLUG" | grep -q "azure-web-app-deploy"; then
         echo "🛠️  Using workflow: azure-web-app-deploy.yml"
         gh workflow run azure-web-app-deploy.yml --ref prod -R "$REPO_SLUG"
@@ -78,9 +84,24 @@ if command -v gh &> /dev/null; then
         echo "🛠️  Using workflow: prod_swarm-ai-production.yml"
         gh workflow run prod_swarm-ai-production.yml --ref prod -R "$REPO_SLUG"
     else
-        echo "❌ No matching workflow found on the default branch."
-        echo "   Please merge 'azure-web-app-deploy.yml' or 'prod_swarm-ai-production.yml' into the default branch (usually 'main')."
-        exit 1
+        echo "⚠️  No matching workflow found on the default branch ('$DEFAULT_BRANCH')."
+        echo "   Desired branch for deployment is 'prod'."
+        if [ "${SWITCH_DEFAULT_BRANCH_FOR_DEPLOY:-0}" = "1" ]; then
+            echo "🔄 Temporarily switching default branch to 'prod' to allow dispatch..."
+            echo "   (original default: $DEFAULT_BRANCH)"
+            gh repo edit -R "$REPO_SLUG" --default-branch prod
+            echo "🛠️  Using workflow: prod_swarm-ai-production.yml"
+            gh workflow run prod_swarm-ai-production.yml --ref prod -R "$REPO_SLUG"
+            echo "↩️  Restoring default branch to '$DEFAULT_BRANCH'..."
+            gh repo edit -R "$REPO_SLUG" --default-branch "$DEFAULT_BRANCH"
+        else
+            echo "❌ Cannot dispatch: GitHub only allows triggering workflows present on the default branch."
+            echo "   Options:"
+            echo "   1) Merge the workflow YAML into '$DEFAULT_BRANCH' (recommended)"
+            echo "   2) Re-run this script with default-branch switch enabled:"
+            echo "      SWITCH_DEFAULT_BRANCH_FOR_DEPLOY=1 ./scripts/deploy.sh"
+            exit 1
+        fi
     fi
     echo "✅ Deployment workflow triggered!"
     echo ""
