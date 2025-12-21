@@ -70,6 +70,7 @@ jobs:
       - name: Copy standalone output
         run: |
           mkdir -p deploy
+          mkdir -p deploy/.next
           cp -r .next/standalone/* ./deploy/
           cp -r .next/static ./deploy/.next/static
           cp -r public ./deploy/public
