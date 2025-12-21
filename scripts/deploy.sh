@@ -62,7 +62,26 @@ echo "🚀 Triggering manual deployment workflow..."
 
 # Check if gh CLI is installed
 if command -v gh &> /dev/null; then
-    gh workflow run prod_swarm-ai-production.yml --ref prod
+    # Trigger a workflow that exists on the default branch
+    REPO_SLUG=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "")
+    if [ -z "$REPO_SLUG" ]; then
+        echo "❌ Could not determine repository slug for gh CLI."
+        echo "   Ensure 'gh auth login' completed successfully."
+        exit 1
+    fi
+
+    echo "📡 Checking available workflows on default branch for $REPO_SLUG..."
+    if gh workflow list -R "$REPO_SLUG" | grep -q "azure-web-app-deploy"; then
+        echo "🛠️  Using workflow: azure-web-app-deploy.yml"
+        gh workflow run azure-web-app-deploy.yml --ref prod -R "$REPO_SLUG"
+    elif gh workflow list -R "$REPO_SLUG" | grep -q "prod_swarm-ai-production"; then
+        echo "🛠️  Using workflow: prod_swarm-ai-production.yml"
+        gh workflow run prod_swarm-ai-production.yml --ref prod -R "$REPO_SLUG"
+    else
+        echo "❌ No matching workflow found on the default branch."
+        echo "   Please merge 'azure-web-app-deploy.yml' or 'prod_swarm-ai-production.yml' into the default branch (usually 'main')."
+        exit 1
+    fi
     echo "✅ Deployment workflow triggered!"
     echo ""
     echo "🔗 Check deployment status:"
